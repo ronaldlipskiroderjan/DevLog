@@ -17,16 +17,6 @@ public class Vaga {
     private String status;
     private String stack;
 
-    public Vaga() {
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getTitulo() {
         return titulo;
