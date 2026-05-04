@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Briefcase, CheckCircle2, ScrollText, Sparkles } from 'lucide-react';
 
 const navItems = [
@@ -8,39 +9,53 @@ const navItems = [
 ];
 
 export function Sidebar() {
+  const [active, setActive] = useState('Dashboard');
+
   return (
-    <aside className="w-80 min-h-screen border-r border-white/10 bg-slate-950/95 backdrop-blur-lg px-6 py-8">
-      <div className="mb-10">
-        <div className="flex items-center gap-3 text-violet-300">
-          <div className="h-12 w-12 rounded-3xl bg-violet-500/15 shadow-glow flex items-center justify-center ring-1 ring-violet-400/20">
-            <Briefcase size={20} />
-          </div>
-          <div>
-            <p className="text-sm uppercase tracking-[0.3em] text-slate-400">DevLog</p>
-            <h1 className="text-2xl font-semibold text-white">Painel</h1>
-          </div>
+    <aside className="sticky top-0 h-screen overflow-y-auto border-r border-white/[0.06] bg-slate-950/95 px-5 py-8 backdrop-blur-xl">
+      <div className="mb-10 flex items-center gap-3 px-2">
+        <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-violet-600/20 ring-1 ring-violet-500/30 shadow-glow">
+          <Briefcase size={20} className="text-violet-300" />
+        </div>
+        <div>
+          <p className="text-[10px] font-semibold uppercase tracking-[0.35em] text-slate-500">DevLog</p>
+          <h1 className="text-xl font-bold text-white">Painel</h1>
         </div>
       </div>
 
-      <nav className="space-y-2">
+      <nav className="space-y-1">
         {navItems.map((item) => {
           const Icon = item.icon;
+          const isActive = active === item.label;
           return (
             <button
               key={item.label}
-              className="flex w-full items-center gap-3 rounded-3xl px-4 py-3 text-left text-slate-300 transition hover:bg-violet-500/10 hover:text-white"
               type="button"
+              onClick={() => setActive(item.label)}
+              className={`group flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all ${
+                isActive
+                  ? 'bg-violet-600/20 text-white ring-1 ring-violet-500/30 shadow-glow'
+                  : 'text-slate-400 hover:bg-white/[0.04] hover:text-slate-200'
+              }`}
             >
-              <Icon size={18} />
-              <span>{item.label}</span>
+              <Icon
+                size={17}
+                className={isActive ? 'text-violet-400' : 'text-slate-500 group-hover:text-slate-300'}
+              />
+              {item.label}
+              {isActive && (
+                <span className="ml-auto h-1.5 w-1.5 rounded-full bg-violet-400" />
+              )}
             </button>
           );
         })}
       </nav>
 
-      <div className="mt-12 rounded-3xl border border-violet-500/20 bg-slate-900/80 p-5 shadow-glow">
-        <p className="text-sm uppercase tracking-[0.25em] text-violet-300/70">Resumo</p>
-        <p className="mt-4 text-base text-slate-200">O DevLog centraliza vagas, entrevistas e seus próximos passos em um só lugar.</p>
+      <div className="mt-10 rounded-2xl border border-violet-500/15 bg-violet-950/30 p-5">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-violet-400/70">Dica</p>
+        <p className="mt-3 text-sm leading-relaxed text-slate-400">
+          Registre todas as vagas que aplicar para acompanhar seu progresso.
+        </p>
       </div>
     </aside>
   );

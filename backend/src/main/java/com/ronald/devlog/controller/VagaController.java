@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/vagas")
 public class VagaController {
@@ -39,7 +40,7 @@ public class VagaController {
                 })
                 .orElseThrow(() -> new RuntimeException("Vaga não encontrada com o ID: " + id));
     }
-    @DeleteMapping
+    @DeleteMapping("/{id}")
     public void deletarVaga(@PathVariable Long id){
         repository.deleteById(id);
     }

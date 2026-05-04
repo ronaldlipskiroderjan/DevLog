@@ -1,14 +1,12 @@
-import { X } from 'lucide-react';
+import { X, AlertTriangle } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
-const defaultForm = {
-  titulo: '',
-  empresa: '',
-  status: 'Pendente',
-  stack: '',
-};
+const defaultForm = { titulo: '', empresa: '', status: 'Pendente', stack: '' };
 
-export function VagaModal({ open, onClose, onSubmit, initialData, isDeleting }) {
+const inputClass =
+  'mt-1.5 w-full rounded-xl border border-white/[0.08] bg-slate-950/80 px-4 py-3 text-sm text-white placeholder-slate-600 transition focus:border-violet-500 focus:ring-1 focus:ring-violet-500/30';
+
+export function VagaModal({ open, onClose, onSubmit, initialData, isDeleting, loading }) {
   const [form, setForm] = useState(defaultForm);
 
   useEffect(() => {
@@ -16,40 +14,54 @@ export function VagaModal({ open, onClose, onSubmit, initialData, isDeleting }) 
     setForm(initialData ?? defaultForm);
   }, [initialData, open]);
 
-  const handleChange = (field) => (event) => {
-    setForm((current) => ({ ...current, [field]: event.target.value }));
-  };
+  const handleChange = (field) => (e) =>
+    setForm((cur) => ({ ...cur, [field]: e.target.value }));
 
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 px-4 py-6 backdrop-blur-sm">
-      <div className="w-full max-w-2xl rounded-[32px] border border-white/10 bg-slate-900/95 p-6 shadow-glow backdrop-blur-xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/75 px-4 py-6 backdrop-blur-md">
+      <div className="w-full max-w-xl rounded-2xl border border-white/[0.08] bg-slate-900 p-7 shadow-glow">
         <div className="mb-6 flex items-start justify-between gap-4">
           <div>
-            <p className="text-sm uppercase tracking-[0.28em] text-violet-300/80">{isDeleting ? 'Confirmar exclusão' : initialData ? 'Editar vaga' : 'Nova vaga'}</p>
-            <h2 className="mt-3 text-3xl font-semibold text-white">{isDeleting ? 'Tem certeza?' : initialData ? 'Atualize os detalhes' : 'Adicionar nova oportunidade'}</h2>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.35em] text-violet-400/80">
+              {isDeleting ? 'Confirmar exclusão' : initialData ? 'Editar vaga' : 'Nova vaga'}
+            </p>
+            <h2 className="mt-1.5 text-2xl font-bold text-white">
+              {isDeleting ? 'Tem certeza?' : initialData ? 'Atualize os detalhes' : 'Registrar candidatura'}
+            </h2>
           </div>
-          <button type="button" onClick={onClose} className="text-slate-400 transition hover:text-white">
-            <X size={24} />
+          <button
+            type="button"
+            onClick={onClose}
+            className="mt-1 flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 transition hover:bg-white/[0.06] hover:text-white"
+          >
+            <X size={18} />
           </button>
         </div>
 
         {isDeleting ? (
-          <div className="rounded-3xl border border-red-500/20 bg-red-500/10 p-6 text-slate-100">
-            <p>Essa ação irá remover permanentemente a vaga selecionada. Deseja continuar?</p>
-            <div className="mt-6 flex flex-wrap gap-3">
+          <div className="rounded-xl border border-red-500/20 bg-red-950/40 p-5">
+            <div className="mb-3 flex items-center gap-2 text-red-400">
+              <AlertTriangle size={16} />
+              <span className="text-sm font-semibold">Ação irreversível</span>
+            </div>
+            <p className="text-sm text-slate-300">
+              A vaga <span className="font-semibold text-white">"{initialData?.titulo}"</span> será removida permanentemente.
+            </p>
+            <div className="mt-5 flex flex-wrap gap-3">
               <button
                 type="button"
+                disabled={loading}
                 onClick={() => onSubmit(form)}
-                className="rounded-3xl bg-red-500 px-6 py-3 text-sm font-semibold text-white transition hover:bg-red-400"
+                className="rounded-xl bg-red-600 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-red-500 disabled:opacity-50 active:scale-95"
               >
-                Sim, deletar
+                {loading ? 'Removendo...' : 'Sim, deletar'}
               </button>
               <button
                 type="button"
                 onClick={onClose}
-                className="rounded-3xl border border-white/10 bg-slate-950 px-6 py-3 text-sm text-slate-200 transition hover:bg-slate-900"
+                className="rounded-xl border border-white/10 bg-slate-950 px-6 py-2.5 text-sm text-slate-300 transition hover:bg-slate-800"
               >
                 Cancelar
               </button>
@@ -57,41 +69,43 @@ export function VagaModal({ open, onClose, onSubmit, initialData, isDeleting }) 
           </div>
         ) : (
           <form
-            onSubmit={(event) => {
-              event.preventDefault();
+            onSubmit={(e) => {
+              e.preventDefault();
               onSubmit(form);
             }}
             className="grid gap-4"
           >
             <div className="grid gap-4 sm:grid-cols-2">
-              <label className="space-y-2 text-sm text-slate-200">
+              <label className="block text-xs font-medium uppercase tracking-[0.2em] text-slate-400">
                 Título
                 <input
                   required
                   value={form.titulo}
                   onChange={handleChange('titulo')}
-                  className="w-full rounded-3xl border border-white/10 bg-slate-950/90 px-4 py-3 text-white outline-none transition focus:border-violet-500"
+                  placeholder="Ex: Desenvolvedor Java"
+                  className={inputClass}
                 />
               </label>
-              <label className="space-y-2 text-sm text-slate-200">
+              <label className="block text-xs font-medium uppercase tracking-[0.2em] text-slate-400">
                 Empresa
                 <input
                   required
                   value={form.empresa}
                   onChange={handleChange('empresa')}
-                  className="w-full rounded-3xl border border-white/10 bg-slate-950/90 px-4 py-3 text-white outline-none transition focus:border-violet-500"
+                  placeholder="Ex: Nubank"
+                  className={inputClass}
                 />
               </label>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
-              <label className="space-y-2 text-sm text-slate-200">
+              <label className="block text-xs font-medium uppercase tracking-[0.2em] text-slate-400">
                 Status
                 <select
                   required
                   value={form.status}
                   onChange={handleChange('status')}
-                  className="w-full rounded-3xl border border-white/10 bg-slate-950/90 px-4 py-3 text-white outline-none transition focus:border-violet-500"
+                  className={inputClass}
                 >
                   <option>Pendente</option>
                   <option>Entrevista</option>
@@ -99,31 +113,32 @@ export function VagaModal({ open, onClose, onSubmit, initialData, isDeleting }) 
                   <option>Rejeitada</option>
                 </select>
               </label>
-              <label className="space-y-2 text-sm text-slate-200">
+              <label className="block text-xs font-medium uppercase tracking-[0.2em] text-slate-400">
                 Stack
                 <input
                   required
                   value={form.stack}
                   onChange={handleChange('stack')}
                   placeholder="Java, Spring, PostgreSQL"
-                  className="w-full rounded-3xl border border-white/10 bg-slate-950/90 px-4 py-3 text-white outline-none transition focus:border-violet-500"
+                  className={inputClass}
                 />
               </label>
             </div>
 
-            <div className="mt-4 flex flex-wrap gap-3">
+            <div className="mt-2 flex flex-wrap gap-3 border-t border-white/[0.06] pt-5">
               <button
                 type="submit"
-                className="rounded-3xl bg-violet-500 px-6 py-3 text-sm font-semibold text-white transition hover:bg-violet-400"
+                disabled={loading}
+                className="rounded-xl bg-violet-600 px-6 py-2.5 text-sm font-semibold text-white shadow-glow transition hover:bg-violet-500 disabled:opacity-50 active:scale-95"
               >
-                {initialData ? 'Salvar alterações' : 'Criar vaga'}
+                {loading ? 'Salvando...' : initialData ? 'Salvar alterações' : 'Criar vaga'}
               </button>
               <button
                 type="button"
                 onClick={onClose}
-                className="rounded-3xl border border-white/10 bg-slate-950 px-6 py-3 text-sm text-slate-200 transition hover:bg-slate-900"
+                className="rounded-xl border border-white/10 bg-slate-950 px-6 py-2.5 text-sm text-slate-300 transition hover:bg-slate-800"
               >
-                Fechar
+                Cancelar
               </button>
             </div>
           </form>
