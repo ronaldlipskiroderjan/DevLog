@@ -17,6 +17,7 @@ public class Vaga {
     private String status;
     private String stack;
 
+    public Long getId() {return id;}
 
     public String getTitulo() {
         return titulo;
