@@ -1,7 +1,7 @@
 package com.ronald.devlog.controller;
 
 import com.ronald.devlog.model.Vaga;
-import com.ronald.devlog.repository.VagaRepository;
+import com.ronald.devlog.service.VagaService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -11,37 +11,29 @@ import java.util.List;
 @RequestMapping("/vagas")
 public class VagaController {
 
-    private final VagaRepository repository;
+    private final VagaService service;
 
-    public VagaController(VagaRepository vagaRepository) {
-        this.repository = vagaRepository;
+    public VagaController(VagaService vagaService) {
+        this.service = vagaService;
     }
 
     @PostMapping
     public Vaga adicionarVaga(@RequestBody Vaga novaVaga){
-        return repository.save(novaVaga);
+        return service.adicionarVaga(novaVaga);
     }
 
     @GetMapping
     public List<Vaga> listarTodas(){
-        return repository.findAll();
+        return service.listarTodas();
     }
 
     @PutMapping("/{id}")
     public Vaga atualizarVaga(@PathVariable Long id, @RequestBody Vaga vagaAtualizada){
-        return repository.findById(id)
-                .map(vagaExistente -> {
-                    vagaExistente.setTitulo(vagaAtualizada.getTitulo());
-                    vagaExistente.setEmpresa(vagaAtualizada.getEmpresa());
-                    vagaExistente.setStatus(vagaAtualizada.getStatus());
-                    vagaExistente.setStack(vagaAtualizada.getStack());
-
-                    return repository.save(vagaExistente);
-                })
-                .orElseThrow(() -> new RuntimeException("Vaga não encontrada com o ID: " + id));
+        return service.atualizarVaga(id,  vagaAtualizada);
     }
+
     @DeleteMapping("/{id}")
     public void deletarVaga(@PathVariable Long id){
-        repository.deleteById(id);
+        service.deletarVaga(id);
     }
 }
