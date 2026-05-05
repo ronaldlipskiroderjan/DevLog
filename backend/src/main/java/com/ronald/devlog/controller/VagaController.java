@@ -1,12 +1,13 @@
 package com.ronald.devlog.controller;
 
+import jakarta.validation.Valid;
 import com.ronald.devlog.model.Vaga;
 import com.ronald.devlog.service.VagaService;
 import org.springframework.web.bind.annotation.*;
 
+
 import java.util.List;
 
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/vagas")
 public class VagaController {
@@ -18,7 +19,7 @@ public class VagaController {
     }
 
     @PostMapping
-    public Vaga adicionarVaga(@RequestBody Vaga novaVaga){
+    public Vaga adicionarVaga(@Valid @RequestBody Vaga novaVaga){
         return service.adicionarVaga(novaVaga);
     }
 
@@ -28,7 +29,7 @@ public class VagaController {
     }
 
     @PutMapping("/{id}")
-    public Vaga atualizarVaga(@PathVariable Long id, @RequestBody Vaga vagaAtualizada){
+    public Vaga atualizarVaga(@PathVariable Long id, @Valid @RequestBody Vaga vagaAtualizada){
         return service.atualizarVaga(id,  vagaAtualizada);
     }
 

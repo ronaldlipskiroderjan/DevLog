@@ -1,5 +1,6 @@
 package com.ronald.devlog.model;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -12,8 +13,12 @@ public class Vaga {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank
     private String titulo;
+
+    @NotBlank
     private String empresa;
+
     private String status;
     private String stack;
 
